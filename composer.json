@@ -11,6 +11,7 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
+        "ranium/laravel-fixerio": "^1.2",
         "realrashid/sweet-alert": "^3.2"
     },
     "require-dev": {

@@ -82,5 +82,9 @@ Sweet alert
 
 Hacer migraciones
 
+Sweet alert
+ranium/laravel-fixerio
+laravel starter pack para autenticar
+
 
 

@@ -9,7 +9,13 @@ class CurrencyController extends Controller
 {
     public function index(){
         $currencies = Currency::all();
+    }
 
-        dd($currencies);
+    public function LatestRates(){
+        try {
+            Currency::getLatestExchangeRate();
+        } catch(Throwable $e){
+            echo 'Algo salió mal: '.$e;
+        }
     }
 }

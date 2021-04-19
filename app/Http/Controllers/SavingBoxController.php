@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\DB;
 use App\Models\SavingBox;
 use App\Models\Currency;
 use App\Models\Account;
+use Fixerio;
 
 class SavingBoxController extends Controller
 {
@@ -60,4 +62,58 @@ class SavingBoxController extends Controller
         }
 
     }
+
+    public function showBuyInfo($currency_id){
+
+        $box = SavingBox::where('currency_id', $currency_id)->first();
+
+        if($box->balance <= 0){
+
+            Alert::error('¡Atención!', 'No tienes dinero en esta caja. Compra divisas primero.');
+
+            return redirect('/dashboard');
+
+        } else {
+
+            try {
+
+                $latestRates = Fixerio::latest();
+                $latestRates = $latestRates['rates'];
+
+                $originCurrency = Currency::where('id', $currency_id)->value('currency_name');
+
+                $originCurrency_code = Currency::where('id', $currency_id)->value('currency_code');
+
+
+                $list_of_currencies = DB::table('currencies')
+                ->join('saving_boxes', 'saving_boxes.currency_id', '=', 'currencies.id')
+                ->where('saving_boxes.account_id', app('user_account')->id)
+                ->get();
+
+                $balance = $box->balance;
+
+                return view('buyCurrency', compact(
+                    'currency_id',
+                    'originCurrency',
+                    'list_of_currencies',
+                    'balance',
+                    'latestRates',
+                    'originCurrency_code'
+                ));
+
+            } catch(Throwable $e){
+
+                Alert::error('¡Atención!', 'Hubo un problema con esta transacción: '.$e.'.');
+            }
+
+        }
+
+    }
+
+    public function buyNewCurrency(Request $request){
+
+        SavingBox::buyCurrency($request);
+
+    }
+
 }
