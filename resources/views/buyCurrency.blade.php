@@ -10,9 +10,12 @@
             {{ csrf_field() }}
 
             <div class="flex border-none justify-center">
-                <div class="mt-10 w-1/3 p-20 bg-green-200 rounded-br-3xl">
+                <div class="mt-10 w-2/4 p-20 bg-green-200 rounded-br-3xl">
                     <div class="flex flex-col justify-around border-none" style="height: 90%;">
-                            <label for="originCurrency" class="font-extrabold text-center mb-4">Vender {{$originCurrency}}</label>
+
+                            <input type="hidden" name="origin_sb" id="origin_sb" value="{{$box->id}}">
+
+                            <label for="originCurrency" class="font-extrabold text-center mb-4">Comprar {{$originCurrency}}</label>
                             <input type="hidden" name="originCurrency" id="originCurrency" value="{{$originCurrency_code}}">
 
                             <div class="flex border-none mb-4">
@@ -39,7 +42,7 @@
 
 
                             <label for="targetAmount">¿Cuánto querés comprar?</label>
-                            <input type="text" name="targetAmount" id="targetAmount" value="" class="text">
+                            <input type="text" name="targetAmount" id="targetAmount" value="" placeholder="Usá puntos o comillas solo para decimales.">
                     </div>
 
                     <div class="flex justify-end pt-2">

@@ -65,7 +65,7 @@ class SavingBoxController extends Controller
 
     public function showBuyInfo($currency_id){
 
-        $box = SavingBox::where('currency_id', $currency_id)->first();
+        $box = SavingBox::where(['currency_id' => $currency_id, 'account_id' => app('user_account')->id])->first();
 
         if($box->balance <= 0){
 
@@ -98,7 +98,9 @@ class SavingBoxController extends Controller
                     'list_of_currencies',
                     'balance',
                     'latestRates',
-                    'originCurrency_code'
+                    'originCurrency_code',
+                    'box'
+
                 ));
 
             } catch(Throwable $e){
@@ -112,7 +114,18 @@ class SavingBoxController extends Controller
 
     public function buyNewCurrency(Request $request){
 
-        SavingBox::buyCurrency($request);
+        try{
+
+            SavingBox::buyCurrency($request);
+
+            Alert::success('¡Listo!', 'Compraste '.$request->targetAmount.' '.$request->currency.'.');
+            return redirect('/dashboard');
+
+        } catch(Throwable $e){
+
+            Alert::error('¡Atención!', 'Hubo un problema con esta transacción: '.$e.'.');
+            return redirect('/dashboard');
+        }
 
     }
 
