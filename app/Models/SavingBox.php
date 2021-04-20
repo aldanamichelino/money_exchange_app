@@ -69,8 +69,6 @@ class SavingBox extends Model
         //costo en moneda origen de la transacción
         $transaction_price = $targetAmount * round($exchangeRate, 2);
 
-        dd($transaction_price);
-
         return $transaction_price;
 
     }

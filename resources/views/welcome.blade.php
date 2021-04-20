@@ -36,9 +36,17 @@
                 </div>
             @endif
 
-            <div>
-                <h1>Mercado de monedas</h1>
-                    <h3>¡Hola! Mercado de monedas te permite cambiar tus pesos por muchas divisas de manera segura y rápida.</h3>
+            <div class="flex border-none justify-evenly relative">
+                <div>
+                    <h1>Mercado de monedas</h1>
+                    <h3 style="color: rgba(251, 191, 36);">¡Hola! Mercado de monedas te permite cambiar</h3>
+                    <h3 style="color: rgba(251, 191, 36); margin-top: -15px;">tus pesos por muchas divisas de manera segura y rápida.</h3>
+                </div>
+                <div style="margin-top: 115px;">
+                    <a href="{{ route('dashboard') }}">
+                        <img style="width: 250px;" src="{{Storage::url('logo/money.svg')}}" alt="">
+                    </a>
+                </div>
 
             </div>
         </div>

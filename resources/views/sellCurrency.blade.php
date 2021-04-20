@@ -93,7 +93,7 @@
         target_amount.addEventListener('focusout', function(){
 
             if(parseInt(target_amount.value) > parseInt(balance_input.value)){
-                Swal.fire('¡Atención!', 'La cantidad a comprar no puede ser mayor que el saldo', 'error');
+                Swal.fire('¡Atención!', 'La cantidad a comprar no puede ser mayor que el saldo.', 'error');
             }
 
         })

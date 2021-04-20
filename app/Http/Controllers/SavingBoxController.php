@@ -113,7 +113,7 @@ class SavingBoxController extends Controller
 
             try{
 
-                $request->balance = str_replace(',', '.', $request->balance);
+                $balance = str_replace(',', '.', $request->balance);
                 $balance = floatval($request->balance);
 
                 $transaction_price = SavingBox::getTransactionPrice($request);
@@ -166,7 +166,7 @@ class SavingBoxController extends Controller
     }
 
 
-    public function sellCurrency($request){
+    public function sellCurrency(Request $request){
 
             if($request->currency == null){
                 Alert::error('¡Atención!', 'Elegí una moneda para vender.');
@@ -176,13 +176,15 @@ class SavingBoxController extends Controller
                 Alert::error('¡Atención!', 'Ingresá una cantidad.');
             } else if(!preg_match("/^[0-9]{1,}([,.]{1}[0-9]{1,2})?$/", $request->targetAmount)){
                 Alert::error('¡Atención!', 'Ingresá una cantidad válida.');
-            } else if($request->balance == null){
+            } else if($request->buying_currency == null){
                 Alert::error('¡Atención!', 'Elegí a qué moneda vender.');
+            } else if($request->balance == null){
+                Alert::error('¡Atención!', 'Elegí con qué moneda comprar.');
             } else {
 
                 try{
 
-                    $request->balance = str_replace(',', '.', $request->balance);
+                    $balance = str_replace(',', '.', $request->balance);
                     $balance = floatval($request->balance);
 
                     $targetAmount = floatval($request->targetAmount);
@@ -191,18 +193,24 @@ class SavingBoxController extends Controller
                     $transaction_price = SavingBox::getTransactionPrice($request);
 
 
-                    if($transaction_price){
+                    if($transaction_price > $balance){
+
+                        Alert::error('¡Atención!', 'La cantidad a comprar no puede ser mayor que el saldo.');
+
+                        return redirect('/dashboard/formularioVenta');
+
+                    } else {
 
                         $new_origin_balance = $balance - $targetAmount;
 
                         //descontar el costo de la caja origen
-                        $updated_origin_box_balance = SavingBox::where(['currency_id' => $request->buying_currency, 'account_id' => app('user_account')->id])
+                        $updated_origin_box_balance = SavingBox::where(['currency_id' => $request->currency, 'account_id' => app('user_account')->id])
                         ->update([
                             'balance' => $new_origin_balance,
                         ]);
 
                         $target_saving_box = DB::table('currencies')
-                        ->where('currencies.id', $request->currency)
+                        ->where('currencies.id', $request->buying_currency)
                         ->join('saving_boxes', 'saving_boxes.currency_id', '=', 'currencies.id')
                         ->where('saving_boxes.account_id', app('user_account')->id)
                         ->select('saving_boxes.*')
@@ -211,18 +219,15 @@ class SavingBoxController extends Controller
                         $new_target_balance = $target_saving_box->balance + $transaction_price;
 
                         //sumar monto target a la caja target
-                        $updated_target_saving_box = SavingBox::where(['currency_id' => $request->currency, 'account_id' => app('user_account')->id])
+                        $updated_target_saving_box = SavingBox::where(['currency_id' => $request->buying_currency, 'account_id' => app('user_account')->id])
                         ->update([
                             'balance' => $new_target_balance,
                         ]);
 
                         Alert::success('¡Listo!', 'Operación exitosa.');
                         return redirect('/dashboard');
+
                     }
-
-
-
-
 
                 } catch(Throwable $e){
 

@@ -48,7 +48,7 @@
                     $saving_boxes = App\Models\SavingBox::where('account_id', app('user_account')->id)->get();
                 @endphp
 
-                <div class="flex border-none flex-row justify-around">
+                <div class="grid grid-cols-3 gap-4">
                     @foreach($saving_boxes as $saving_box)
                     <div class="overflow-hidden shadow-sm sm:rounded-lg mt-10 w-96">
                         <div class="bg-white p-6 border-2 border-green-400 rounded-3xl">
