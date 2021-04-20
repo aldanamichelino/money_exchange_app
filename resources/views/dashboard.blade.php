@@ -13,18 +13,18 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg flex border:none justify-between items-center">
                 <div class="p-6 bg-white">
-                    ¡Bienvenid@ a Mercado de Monedas,
-                    {{auth()->user()->name}}!
+                    <h1>¡Bienvenid@ a Mercado de Monedas,</h1>
+                    <h1>{{auth()->user()->name}}!</h1>
                 </div>
 
 
                <div style="width: 800px;">
                     @if(!app('user_account')->id)
-                        <div class="p-6 bg-white border-b border-gray-200 flex justify-center">
+                        <div class="p-6 bg-white border-b border-gray-200 flex justify-center border-none">
                             <button type="button" class="bg-green-400 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-full" onclick="window.location='{{Route('createAccount')}}'">Para comenzar, creá tu caja en pesos argentinos</button>
                         </div>
                     @else
-                        <div class="p-6 bg-white border-b border-gray-200 flex justify-around">
+                        <div class="p-6 bg-white border-b border-gray-200 flex justify-around border-none">
                             @include('partials.deposit-pesos-modal')
                             <button type="button" class="modal-open bg-green-400 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-full focus:outline-none">Depositar pesos argentinos</button>
 
@@ -43,7 +43,7 @@
 
 
 
-            @if(app('user_account')->id)->get())
+            @if(app('user_account')->id)
                 @php
                     $saving_boxes = App\Models\SavingBox::where('account_id', app('user_account')->id)->get();
                 @endphp

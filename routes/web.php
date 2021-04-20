@@ -34,7 +34,7 @@ Route::view('dashboard/crearCaja', 'createNewBox')->middleware('auth')->name('cr
 Route::post('dashboard/guardarNuevaCaja', [SavingBoxController::class, 'store'])->middleware('auth')->name('storeSavingBox');
 Route::get('dashboard/ultimasTasasCambio', [CurrencyController::class, 'LatestRates'])->middleware('auth')->name('latestRates');
 Route::get('dashboard/comprarMoneda', [SavingBoxController::class, 'showInfo'])->middleware('auth')->name('showBuyForm');
-Route::post('dashboard/guardarCompraMoneda', [SavingBoxController::class, 'buyCurrency'])->middleware('auth')->name('buyCurrency');
-Route::view('dashboard/formularioVenta', [SavingBoxController::class, 'showInfo'])->middleware('auth')->name('showSellForm');
 Route::get('dashboard/formularioCompra', [SavingBoxController::class, 'showInfo'])->middleware('auth')->name('showBuyForm');
+Route::post('dashboard/guardarCompraMoneda', [SavingBoxController::class, 'buyCurrency'])->middleware('auth')->name('buyCurrency');
+Route::get('dashboard/formularioVenta', [SavingBoxController::class, 'showInfo'])->middleware('auth')->name('showSellForm');
 Route::post('dashboard/guardarVentaMoneda', [SavingBoxController::class, 'sellCurrency'])->middleware('auth')->name('sellCurrency');

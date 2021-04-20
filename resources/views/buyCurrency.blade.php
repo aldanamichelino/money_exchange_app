@@ -21,12 +21,12 @@
                                 @endforeach
                             </select>
 
-                            <label for="currency">Cantidad</label>
+                            <label for="targetAmount">Cantidad</label>
                             <input type="text" name="targetAmount" id="targetAmount" value="" class="mb-4" placeholder="Usá puntos o comillas solo para decimales.">
 
 
 
-                            <label for="currency">¿Con qué moneda querés comprar?</label>
+                            <label for="buying_currency">¿Con qué moneda querés comprar?</label>
                             <select id="targetCurrency" name="buying_currency" class="mb-4" id="selected_currency">
                                 <option selected value="">Elegí una moneda</option>
                                 @foreach($list_of_currencies as $currency_item)

@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\SavingBox;
 use App\Models\Currency;
 use Illuminate\Support\Facades\DB;
-use Spatie\Async\Pool;
 use Fixerio;
 
 class SavingBox extends Model
@@ -42,7 +41,7 @@ class SavingBox extends Model
             return $newBox;
     }
 
-    public static function buyCurrency($data){
+    public static function getTransactionPrice($data){
 
         $currency_to_buy = Currency::where('id', $data->currency)->value('currency_code');
         $buying_currency = Currency::where('id', $data->buying_currency)->value('currency_code');
@@ -57,56 +56,22 @@ class SavingBox extends Model
         $targetAmount = floatval($data->targetAmount);
         $targetAmount = round($targetAmount, 2);
 
-        $mypool = Pool::create();
+        $latestRates = Fixerio::latest();
+        $latestRates = $latestRates['rates'];
 
-        $mypool[] = async(){
+        //trae las cotizaciones con base en el euro
+        $selected_currency_exchange_to_euro = $latestRates[$currency_to_buy];
+        $original_currency_exchange_to_euro = $latestRates[$buying_currency];
 
-            $latestRates = Fixerio::latest();
-            $latestRates = $latestRates['rates'];
+        //tasa de cambio entre moneda origen y moneda meta
+        $exchangeRate = round($original_currency_exchange_to_euro, 2) / round($selected_currency_exchange_to_euro, 2);
 
-            //trae las cotizaciones con base en el euro
-            $selected_currency_exchange_to_euro = $latestRates[$currency_to_buy];
-            $original_currency_exchange_to_euro = $latestRates[$buying_currency];
+        //costo en moneda origen de la transacción
+        $transaction_price = $targetAmount * round($exchangeRate, 2);
 
-            //tasa de cambio entre moneda origen y moneda meta
-            $exchangeRate = round($original_currency_exchange_to_euro, 2) / round($selected_currency_exchange_to_euro, 2);
+        dd($transaction_price);
 
-            //costo en moneda origen de la transacción
-            $transaction_price = $targetAmount * round($exchangeRate, 2);
+        return $transaction_price;
 
-        }
-
-
-
-
-            if($transaction_price > $balance){
-
-                Alert::error('¡Error!', 'No tienes saldo suficiente. Costo de la operación: '.$transaction_price.'.');
-
-                return redirect('/dashboard/formularioCompra');
-
-            } else {
-                $new_origin_balance = $balance - $transaction_price;
-
-            //descontar el costo de la caja origen
-            $updated_origin_box_balance = SavingBox::where(['currency_id' => $data->buying_currency, 'account_id' => app('user_account')->id])
-            ->update([
-                'balance' => $new_origin_balance,
-            ]);
-
-            $target_saving_box = DB::table('currencies')
-            ->where('currency_code', $currency_to_buy)
-            ->join('saving_boxes', 'saving_boxes.currency_id', '=', 'currencies.id')
-            ->select('saving_boxes.*')
-            ->first();
-
-            $new_target_balance = $target_saving_box->balance + $targetAmount;
-
-            //sumar monto target a la caja target
-            $updated_target_saving_box = SavingBox::where(['currency_id' => $data->currency, 'account_id' => app('user_account')->id])
-            ->update([
-                'balance' => $new_target_balance,
-            ]);
-        }
     }
 }
