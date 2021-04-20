@@ -12,7 +12,8 @@
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
         "ranium/laravel-fixerio": "^1.2",
-        "realrashid/sweet-alert": "^3.2"
+        "realrashid/sweet-alert": "^3.2",
+        "spatie/async": "^1.5"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

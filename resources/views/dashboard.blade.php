@@ -7,18 +7,19 @@
 
     <div class="py-12">
             @php
-                $account_created = App\Models\Account::where('user_id', auth()->id())->first();
+                $user_boxes = App\Models\SavingBox::where('account_id', app('user_account')->id)->get();
             @endphp
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg flex border:none justify-between items-center">
                 <div class="p-6 bg-white">
-                    ¡Bienvenid@ a Mercado de Monedas, {{auth()->user()->name}}!
+                    ¡Bienvenid@ a Mercado de Monedas,
+                    {{auth()->user()->name}}!
                 </div>
 
 
-               <div style="width: 550px;">
-                    @if(!$account_created)
+               <div style="width: 800px;">
+                    @if(!app('user_account')->id)
                         <div class="p-6 bg-white border-b border-gray-200 flex justify-center">
                             <button type="button" class="bg-green-400 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-full" onclick="window.location='{{Route('createAccount')}}'">Para comenzar, creá tu caja en pesos argentinos</button>
                         </div>
@@ -28,6 +29,13 @@
                             <button type="button" class="modal-open bg-green-400 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-full focus:outline-none">Depositar pesos argentinos</button>
 
                             <button type="button" class="bg-green-400 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-full focus:outline-none" onclick="window.location='{{Route('createSavingBox')}}'">Abrir caja en otra moneda</button>
+
+                            @if(count($user_boxes->toArray()) > 1)
+
+                            <button class="bg-yellow-400 hover:bg-yellow-100 font-bold py-2 px-4 rounded-full focus:outline-none align-middle"><a href="{{Route('showBuyForm')}}">Comprar</a></button>
+                            <button class="bg-yellow-400 hover:bg-yellow-100 font-bold py-2 px-4 rounded-full focus:outline-none align-middle"><a href="{{Route('showSellForm')}}">Vender</a></button>
+
+                            @endif
                         </div>
                     @endif
                </div>
@@ -35,33 +43,21 @@
 
 
 
-            @if($account_created)
+            @if(app('user_account')->id)->get())
                 @php
-                    $saving_boxes = App\Models\SavingBox::where('account_id', $account_created->id)->get();
+                    $saving_boxes = App\Models\SavingBox::where('account_id', app('user_account')->id)->get();
                 @endphp
 
                 <div class="flex border-none flex-row justify-around">
                     @foreach($saving_boxes as $saving_box)
                     <div class="overflow-hidden shadow-sm sm:rounded-lg mt-10 w-96">
                         <div class="bg-white p-6 border-2 border-green-400 rounded-3xl">
-                            @php $currency = App\Models\Currency::where('id', $saving_box->currency_id)->first();
-                                 $user_boxes = App\Models\SavingBox::where('account_id', app('user_account')->id)->get();
-                            @endphp
+                            @php $currency = App\Models\Currency::where('id', $saving_box->currency_id)->first(); @endphp
 
                             <h1>Cuenta en <span class="font-extrabold">{{$currency->currency_name}}</span></h1>
                             <h3>Saldo: <span class="text-green-400 font-extrabold">{{$currency->currency_symbol}} {{$saving_box->balance}}</span></h3>
                             <h3>Última actualización: {{date("d.m.y H:i:s", strtotime($saving_box->updated_at))}}</h3>
 
-                            @if(count($user_boxes->toArray()) > 1)
-
-                                <div class="flex border-none justify-end">
-                                    <div class="flex border-none justify-around">
-                                        <a href="{{Route('showBuyForm', $currency->id)}}" class="buy-sell-btn">Comprar</a>
-                                        <a href="" class="buy-sell-btn">Vender</a>
-                                    </div>
-                                </div>
-
-                            @endif
                         </div>
                     </div>
                     @endforeach

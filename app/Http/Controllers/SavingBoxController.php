@@ -63,68 +63,64 @@ class SavingBoxController extends Controller
 
     }
 
-    public function showBuyInfo($currency_id){
-
-        $box = SavingBox::where(['currency_id' => $currency_id, 'account_id' => app('user_account')->id])->first();
-
-        if($box->balance <= 0){
-
-            Alert::error('¡Atención!', 'No tienes dinero en esta caja. Compra divisas primero.');
-
-            return redirect('/dashboard');
-
-        } else {
+    public function showInfo(){
 
             try {
-
-                $latestRates = Fixerio::latest();
-                $latestRates = $latestRates['rates'];
-
-                $originCurrency = Currency::where('id', $currency_id)->value('currency_name');
-
-                $originCurrency_code = Currency::where('id', $currency_id)->value('currency_code');
-
 
                 $list_of_currencies = DB::table('currencies')
                 ->join('saving_boxes', 'saving_boxes.currency_id', '=', 'currencies.id')
                 ->where('saving_boxes.account_id', app('user_account')->id)
                 ->get();
 
-                $balance = $box->balance;
+                //devuelve la vista según la ruta elegida en dashboard
+                if(strpos($_SERVER['PATH_INFO'], 'formularioCompra')){
 
-                return view('buyCurrency', compact(
-                    'currency_id',
-                    'originCurrency',
-                    'list_of_currencies',
-                    'balance',
-                    'latestRates',
-                    'originCurrency_code',
-                    'box'
+                    return view('buyCurrency', compact(
+                        'list_of_currencies',
+                    ));
 
-                ));
+                } else {
+
+                    return view('sellCurrency', compact(
+                        'list_of_currencies',
+                    ));
+
+                }
+
+
+
+            } catch(Throwable $e){
+
+                Alert::error('¡Atención!', 'Hubo un problema para mostrar esta información: '.$e.'.');
+        }
+
+
+    }
+
+    public function buyCurrency(Request $request){
+
+        if($request->currency == null){
+            Alert::error('¡Atención!', 'Elegí una moneda para comprar.');
+        } else if($request->targetAmount == null){
+            Alert::error('¡Atención!', 'Ingresá una cantidad.');
+        } else if(!preg_match("/^[0-9]{1,}([,.]{1}[0-9]{1,2})?$/", $request->targetAmount)){
+            Alert::error('¡Atención!', 'Ingresá una cantidad válida.');
+        } else if($request->balance == null){
+            Alert::error('¡Atención!', 'Elegí con qué moneda comprar.');
+        } else {
+
+            try{
+
+                SavingBox::buyCurrency($request);
+
+                Alert::success('¡Listo!', 'Operación exitosa.');
+                return redirect('/dashboard');
 
             } catch(Throwable $e){
 
                 Alert::error('¡Atención!', 'Hubo un problema con esta transacción: '.$e.'.');
+                return redirect('/dashboard');
             }
-
-        }
-
-    }
-
-    public function buyNewCurrency(Request $request){
-
-        try{
-
-            SavingBox::buyCurrency($request);
-
-            Alert::success('¡Listo!', 'Compraste '.$request->targetAmount.' '.$request->currency.'.');
-            return redirect('/dashboard');
-
-        } catch(Throwable $e){
-
-            Alert::error('¡Atención!', 'Hubo un problema con esta transacción: '.$e.'.');
-            return redirect('/dashboard');
         }
 
     }

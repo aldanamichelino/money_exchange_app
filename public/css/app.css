@@ -32097,14 +32097,6 @@ body.modal-active {
   overflow-y: visible !important;
 }
 
-.buy-sell-btn {
-  padding: 5px 8px 5px 8px;
-  background-color: #FBBF24;
-  border-radius: 9999px;
-  font-size: 12px;
-  margin-right: 10px;
-}
-
 @media (min-width: 640px) {
   .sm\:container {
     width: 100%;
