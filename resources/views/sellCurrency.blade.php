@@ -29,7 +29,7 @@
                             <label for="targetAmount">Cantidad</label>
                             <input type="text" name="targetAmount" id="targetAmount" value="" class="mb-4" placeholder="Usá puntos o comillas solo para decimales.">
 
-                            <label for="buying_currency">¿Por qué moneda querés vender?</label>
+                            <label for="buying_currency">¿Por qué moneda lo vas a cambiar?</label>
                             <select id="targetCurrency" name="buying_currency" class="mb-4" id="selected_currency">
                                 <option selected value="">Elegí una moneda</option>
                                 @foreach($list_of_currencies as $currency_item)

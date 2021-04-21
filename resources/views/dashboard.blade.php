@@ -33,9 +33,13 @@
 
                             <button type="button" class="bg-green-400 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-full focus:outline-none" onclick="window.location='{{Route('createSavingBox')}}'">Abrir caja en otra moneda</button>
 
-                            <button class="buy-btn bg-yellow-400 hover:bg-yellow-100 font-bold py-2 px-4 rounded-full focus:outline-none align-middle"><a href="{{Route('showBuyForm')}}">Comprar</a></button>
-                            <button class="sell-btn bg-yellow-400 hover:bg-yellow-100 font-bold py-2 px-4 rounded-full focus:outline-none align-middle"><a href="{{Route('showSellForm')}}">Vender</a></button>
+                            @if(count($user_boxes) > 1)
+                            <button class="bg-yellow-400 hover:bg-yellow-100 font-bold py-2 px-4 rounded-full focus:outline-none align-middle"><a href="{{Route('showBuyForm')}}">Comprar</a></button>
+                            <button class="bg-yellow-400 hover:bg-yellow-100 font-bold py-2 px-4 rounded-full focus:outline-none align-middle"><a href="{{Route('showSellForm')}}">Vender</a></button>
+                            @endif
+
                         </div>
+
                     @endif
                </div>
             </div>
@@ -46,14 +50,6 @@
                 @php
                     $saving_boxes = App\Models\SavingBox::where('account_id', app('user_account')->id)->get();
                     $saving_box_in_pesos = App\Models\SavingBox::where(['account_id' => app('user_account')->id, 'currency_id' => 1])->first();
-                    $one_box = count($user_boxes->toArray()) < 2;
-
-                    $sum = 0;
-                    foreach ($saving_boxes as $box) {
-                        $sum += $box->balance;
-                    }
-
-                    $sum = intval($sum);
                 @endphp
 
                 <div class="grid grid-cols-3 gap-4">
@@ -65,7 +61,7 @@
                                  $last_update = local_date($last_update);
                             @endphp
 
-                            <h1>Cuenta en <span class="font-extrabold">{{$currency->currency_name}}</span></h1>
+                            <h1>Caja en <span class="font-extrabold">{{$currency->currency_name}}</span></h1>
                             <h3>Saldo: <span class="text-green-400 font-extrabold">{{$currency->currency_symbol}} {{$saving_box->balance}}</span></h3>
                             <h3>Última actualización: {{$last_update}}</h3>
 
@@ -116,22 +112,6 @@
         body.classList.toggle('modal-active')
         }
 
-        var buy_button = document.querySelector('.buy-btn');
-        var sell_button = document.querySelector('.sell-btn');
-
-        buy_button.addEventListener('click', function(){
-            if((<?php echo $saving_box_in_pesos->balance ?> == 0) && <?php echo $one_box ?> == true){
-                Swal.fire('¡Atención!', 'Para operar, depositá pesos en tu caja y abre una caja en otra moneda', 'error');
-                event.preventDefault();
-            }
-        })
-
-        sell_button.addEventListener('click', function(){
-            if((<?php echo $saving_box_in_pesos->balance ?> == 0) && <?php echo $one_box ?> == true){
-                Swal.fire('¡Atención!', 'Para operar, depositá pesos en tu caja y abre una caja en otra moneda', 'error');
-                event.preventDefault();
-            }
-        })
 
     </script>
 
