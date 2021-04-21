@@ -22,7 +22,8 @@
                             </select>
 
                             <div class="flex border-none">
-                                <label for="balance">Saldo: &nbsp;<h3 id="balance"></h3></label>
+                                <label for="balance">Saldo: &nbsp;</label>
+                                <h3 id="balance"></h3>
                             </div>
                                 <input type="hidden" name="balance" value="" id="balance_input" class="mb-4">
 
@@ -91,7 +92,6 @@
         });
 
         target_amount.addEventListener('focusout', function(){
-
             if(parseInt(target_amount.value) > parseInt(balance_input.value)){
                 Swal.fire('¡Atención!', 'La cantidad a vender no puede ser mayor que el saldo.', 'error');
             }

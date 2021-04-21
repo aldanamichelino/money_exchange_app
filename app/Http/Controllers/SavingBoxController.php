@@ -49,7 +49,9 @@ class SavingBoxController extends Controller
             try{
                 SavingBox::createSavingBox($request);
 
-                Alert::success('¡Listo!', 'Creaste una nueva caja en '.$request->currency.'.');
+                $currency = Currency::where('id', $request->currency)->value('currency_name');
+
+                Alert::success('¡Listo!', 'Creaste una nueva caja en '.$currency.'.');
 
                 return redirect('/dashboard');
 
@@ -101,14 +103,19 @@ class SavingBoxController extends Controller
 
         if($request->currency == null){
             Alert::error('¡Atención!', 'Elegí una moneda para comprar.');
+            return redirect('/dashboard/formularioCompra');
         } else if($request->currency == $request->buying_currency){
             Alert::error('¡Atención!', 'La moneda origen y la moneda meta no pueden ser iguales.');
+            return redirect('/dashboard/formularioCompra');
         } else if($request->targetAmount == null){
             Alert::error('¡Atención!', 'Ingresá una cantidad.');
+            return redirect('/dashboard/formularioCompra');
         } else if(!preg_match("/^[0-9]{1,}([,.]{1}[0-9]{1,2})?$/", $request->targetAmount)){
             Alert::error('¡Atención!', 'Ingresá una cantidad válida.');
+            return redirect('/dashboard/formularioCompra');
         } else if($request->balance == null){
-            Alert::error('¡Atención!', 'Elegí con qué moneda comprar.');
+            Alert::error('¡Atención!', 'Elegí con qué moneda pagar.');
+            return redirect('/dashboard/formularioCompra');
         } else {
 
             try{
@@ -122,7 +129,7 @@ class SavingBoxController extends Controller
 
                     $currency = Currency::where('id', $request->buying_currency)->value('currency_code');
 
-                    Alert::error('¡Atención!', 'No tenés suficiente saldo. Costo de la operación: '.$transaction_price.' '.$currency.'. Ingresá más dinero en la cuenta con la que querés comprar.');
+                    Alert::error('¡Atención!', 'No tenés suficiente saldo. Costo de la operación: '.$transaction_price.' '.$currency.'.');
                     return redirect('/dashboard/formularioCompra');
 
                 } else {
@@ -170,16 +177,22 @@ class SavingBoxController extends Controller
 
             if($request->currency == null){
                 Alert::error('¡Atención!', 'Elegí una moneda para vender.');
+                return redirect('/dashboard/formularioVenta');
             } else if($request->currency == $request->buying_currency){
                 Alert::error('¡Atención!', 'La moneda origen y la moneda meta no pueden ser iguales.');
+                return redirect('/dashboard/formularioVenta');
             } else if($request->targetAmount == null){
                 Alert::error('¡Atención!', 'Ingresá una cantidad.');
+                return redirect('/dashboard/formularioVenta');
             } else if(!preg_match("/^[0-9]{1,}([,.]{1}[0-9]{1,2})?$/", $request->targetAmount)){
                 Alert::error('¡Atención!', 'Ingresá una cantidad válida.');
+                return redirect('/dashboard/formularioVenta');
             } else if($request->buying_currency == null){
                 Alert::error('¡Atención!', 'Elegí a qué moneda vender.');
+                return redirect('/dashboard/formularioVenta');
             } else if($request->balance == null){
-                Alert::error('¡Atención!', 'Elegí con qué moneda comprar.');
+                Alert::error('¡Atención!', 'Elegí a qué moneda lo vas a cambiar.');
+                return redirect('/dashboard/formularioVenta');
             } else {
 
                 try{
@@ -192,10 +205,9 @@ class SavingBoxController extends Controller
 
                     $transaction_price = SavingBox::getTransactionPrice($request);
 
+                    if($targetAmount > $balance){
 
-                    if($transaction_price > $balance){
-
-                        Alert::error('¡Atención!', 'La cantidad a comprar no puede ser mayor que el saldo.');
+                        Alert::error('¡Atención!', 'La cantidad a vender no puede ser mayor que el saldo.');
 
                         return redirect('/dashboard/formularioVenta');
 

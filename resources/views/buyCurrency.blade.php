@@ -35,7 +35,8 @@
                             </select>
 
                             <div class="flex border-none">
-                                <label for="balance">Saldo: &nbsp;<h3 id="balance"></h3></label>
+                                <label for="balance">Saldo: &nbsp;</label>
+                                <h3 id="balance"></h3>
                             </div>
                                 <input type="hidden" name="balance" value="" id="balance_input" class="mb-4">
 

@@ -1,90 +1,55 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+## Documentación
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Arquitectura
 
-## About Laravel
+Mercado de monedas es una aplicación de compra-venta de monedas desarrollada en Laravel 8, la última versión del framework de php. Para más información sobre Laravel: https://laravel.com/.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Toda la funcionalidad de autenticación está creada con Laravel Breeze, una herramienta del framework completa que trae toda la lógica de registro y login del usuario, migración de tablas relacionadas, como users, password_resets, etc., validación estándar de registro y login y barra de navegación. Para más información: https://laravel.com/docs/8.x/starter-kits#laravel-breeze.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Su arquitectura sigue el patrón modelo-vista-controlador que ofrece el framework y su diseño es full-stack (back-end + front-end) con programación orientada a objetos.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+La base de datos está creada en MySQL. Las tablas creadas específicamente para esta aplicación son: accounts, currencies y saving_boxes. El nombre de la base de datos es pruebafip.
 
-## Learning Laravel
+Las librerías externas utilizadas son: Laravel-Fixerio, para consumir la api de tasas de cambio de fixer.io; Sweet-Alert, un paquete para mostrar mensajes al usuario; y Carbon, un paquete de parseo de fechas incorporada a Laravel, para mostrarle al usuario las fechas en su huso horario.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+El estilo de la aplición está casi enteramente armado con Tailwind, un framework CSS que permite estilizar los elementos html desde las mismas etiquetas. Para más información: https://tailwindcss.com/. Solo hay algunos detalles entrados en una plantilla costumizada de css, que se compila desde la terminal.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Algunas validaciones y mensajes del lado del usuario están hechas con Javascript.
 
-## Laravel Sponsors
+# Diseño
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+--Registro--
 
-### Premium Partners
+La aplicación tiene una landing page que le cuenta al usuario para qué sirve y le muestra los accesos al registro y login. 
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/)**
-- **[OP.GG](https://op.gg)**
+--Página de bienvenida--
 
-## Contributing
+No bien se registra o una vez que el usuario se autentica, se abre el dashboard de la aplicación. Allí el usuario recibe un saludo personalizado y tiene un botón que le indica cuál es el primer paso que debe tomar: crearse una caja en pesos. En el backend, con la creación de la caja en pesos, se crea simultáneamente la cuenta monetaria del usuario, que estará vinculada a todas sus cajas de divisas. Una vez creada la cuenta, verá un mensaje de confirmación que le indica que todo salió bien y se mostrará su caja en pesos con el saldo por default y la última actualización de movimientos. También cambiará la barra de navegación y ahora verá dos botones: Depositar pesos argentinos y abrir una caja en otra moneda. Para simplificar la utilización de los datos, elegí 14 monedas de entre las opciones que maneja Fixer.io, que me parecían ser las que más útiles le resultarían a un usuario en Argentina. Una posibilidad de mejora para la app es agregar un menú para que este pueda crear nuevas monedas según las opciones ofrecidas por la api.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+El botón de depositar pesos abre un modal donde el usuario puede entrar una nueva cantidad de dinero y guardar. No bien cierre y vea el mensaje de éxito, se mostrará el saldo actualizado de su caja en pesos.
 
-## Code of Conduct
+El botón de abrir caja en otra moneda le permite elegir entre las opciones de la tabla currencies. No podrá crear una nueva caja en una divisa que ya tenga relacionada a su cuenta monetaria. Una vez elegida la moneda y creada la segunda caja, verá la información actualizada pertinente con su nueva caja en otra moneda. Además, aparecerán los botones de COMPRA y VENTA para que pueda comenzar a operar.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+--Compra y venta--
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+La vista de compra y la vista de venta tienen validaciones para que las monedas origen y destino no sean iguales, para que el costo de compra no sea superior al saldo de la moneda compradora, para que la cantidad de para vender no sea superior al saldo de la moneda vendedora y para que se ingrese una cantidad de dinero válida. Los saldos de las cajas se actualizan del lado del usuario, con javascript, según la divisa elegida. Si la operación elegida salió bien, se verá un mensaje de éxito y se redigirá al usuario a la vista del dashboard, donde verá los montos actualizados de sus cuentas y las fechas de operaciones.
 
 
-## Comandos
+# Instrucciones para compilar y ejecutar
 
-Php artisan serve
-Composer install para instalar paquetes
+1) Clonar el repositorio o guardar la carpeta zipeada.
+2) Para poder levantar la aplicación, yo utilicé Xampp, donde seteé los puertos de localhost y mysql. 
+2) En app/database, encontrarán un dump de la base de datos. Crear una conexión en un cliente mysql e importar el archivo a un schema para ver las tablas y la información de monedas.
+3) Duplicar el archivo .env.example y llamarlo .env. Ahí tendrán que completar los datos de su conexión a mysql y de la base de datos. Allí también verán el endpoint y la access_key de la api de fixerio. Al momento de enviar la prueba, tenía hechas 160 llamadas a la api.
+4) Comandos a correr:
+ - `npm install` -> para instalar node_modules
+ - `composer install` -> para instalar los paquetes de vendor de Laravel
+ - `php artisan migrate` -> para correr migraciones 
+ - `composer dump-autoload` -> para sumar archivos descriptos allí
+ - `php artisan storage:link` -> para vincular la carpeta public con storage y ver las imágenes utilizadas
 
-npm install
-npm run dev para compilar Laravel mix y que cargue css y js
+Para levantar la aplicación, correr `php artisan serve`, que levantará el servidor. Luego, correr `npm run dev` para que complile Laravel-Mix y puedan ver las modificaciones de js y css.
 
-composer dump-autoload
+Si tienen alguna duda, por favor, comuníquense conmigo: aldana.michelino@gmail.com o 3424363304.
 
-php artisan storage:link para vincular la carpeta public con storage y que se vean las imágenes
-
-
-Configurar env
-
-Sumar base de datos
-Sweet alert
-
-Hacer migraciones
-
-Sweet alert
-ranium/laravel-fixerio
-laravel starter pack para autenticar
-
-
-
+Muchas gracias por su interés en mi trabajo.

@@ -29,11 +29,10 @@
             {{ csrf_field() }}
 
                 <div class="flex flex-col justify-around border-none" style="height: 90%;">
-                        <label for="account">Cuenta: <h1>{{$account->id}}</h1></label>
-                        <input type="text" name="account" id="account" value="{{$account->id}}" class="hidden">
+                        <input type="hidden" name="account" id="account" value="{{$account->id}}" class="hidden">
 
                         <label for="deposit">Monto a depositar</label>
-                        <input type="text" name="deposit" id="deposit" value="">
+                        <input type="text" name="deposit" id="deposit" value="" required>
 
                 </div>
 

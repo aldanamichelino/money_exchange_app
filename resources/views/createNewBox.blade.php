@@ -15,17 +15,13 @@
                     <div class="flex flex-col justify-around border-none" style="height: 90%;">
                             <label for="currency">Elegí una moneda</label>
                             @php $currencies = App\Models\Currency::all(); @endphp
-                            <select name="currency">
+                            <select name="currency" required>
                                 @foreach($currencies as $currency)
                                     <option value="{{$currency->id}}">{{$currency->currency_name}} {{$currency->currency_code}}</option>
                                 @endforeach
                             </select>
 
-                            <div class="flex border-none">
-                                <label for="account">Cuenta: &nbsp</label>
-                                <h1>{{$account->id}}</h1>
-                            </div>
-                            <input type="text" name="account" id="account" value="{{$account->id}}" class="hidden">
+                            <input type="hidden" name="account" id="account" value="{{$account->id}}">
                     </div>
 
                     <div class="flex justify-end pt-2">

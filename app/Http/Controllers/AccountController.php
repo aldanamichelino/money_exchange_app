@@ -17,7 +17,7 @@ class AccountController extends Controller
             try {
                 Account::createAccount();
 
-                Alert::success('¡Listo!', 'Creaste tu cuenta principal.');
+                Alert::success('¡Listo!', 'Creaste tu caja de ahorros en pesos.');
 
                 return redirect('/dashboard');
 
