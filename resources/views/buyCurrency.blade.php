@@ -26,7 +26,7 @@
 
 
 
-                            <label for="buying_currency">¿Con qué moneda querés comprar?</label>
+                            <label for="buying_currency">¿Con qué caja de ahorros querés pagar?</label>
                             <select id="targetCurrency" name="buying_currency" class="mb-4" id="selected_currency">
                                 <option selected value="">Elegí una moneda</option>
                                 @foreach($list_of_currencies as $currency_item)

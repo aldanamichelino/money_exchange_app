@@ -9,12 +9,15 @@ use App\Models\SavingBox;
 use App\Models\Currency;
 use Illuminate\Support\Facades\DB;
 use Fixerio;
+use Carbon\Carbon;
 
 class SavingBox extends Model
 {
     use HasFactory;
 
     protected $fillable = ['currency_id', 'account_id', 'balance'];
+
+    protected $dates = ['created_at', 'updated_at'];
 
     public function account(){
         return $this->belongsTo(Account::class);
